@@ -10,7 +10,7 @@ import java.time.*;
  * @create 2020/5/22 15:16
  */
 @SpringBootTest
-public class N_DateTime {
+public class NewDateTime {
     /**
      * Java 8 Date Time API是开发人员最热门的变更之一。
      * Java从一开始就缺少日期和时间的一致方法，Java 8 Date Time API是核心Java API的一个受欢迎的补充。
@@ -133,17 +133,6 @@ public class N_DateTime {
         Instant specificTime = Instant.ofEpochMilli(timestamp.toEpochMilli());
         System.out.println("Specific Time = "+specificTime);
 
-        //Duration类表示秒或纳秒时间间隔，适合处理较短的时间，需要更高的精确性。我们能使用between()方法比较两个瞬间的差
-        Instant start = Instant.parse("2017-10-03T10:15:30.00Z");
-        Instant end = Instant.parse("2017-10-03T10:16:30.00Z");
-        Duration duration = Duration.between(start, end);
-        System.out.println(duration);
-
-
-
-
-
-
     }
 
     /**
@@ -185,5 +174,15 @@ public class N_DateTime {
     }
 
 
-
+    /**
+     * Duration类表示秒或纳秒时间间隔，适合处理较短的时间，需要更高的精确性。
+     */
+    @Test
+    void duration(){
+        //Duration类表示秒或纳秒时间间隔，适合处理较短的时间，需要更高的精确性。我们能使用between()方法比较两个瞬间的差
+        Instant start = Instant.parse("2017-10-03T10:15:30.00Z");
+        Instant end = Instant.parse("2017-10-03T10:16:30.00Z");
+        Duration duration = Duration.between(start, end);
+        System.out.println(duration);
+    }
 }
