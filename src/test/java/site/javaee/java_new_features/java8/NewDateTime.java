@@ -443,6 +443,7 @@ public class NewDateTime {
     /**
      * 新旧dateTime转换
      */
+    @Test
     void oldToNew() {
         //旧API转新API，通过toInstant()方法转换为Instant对象，再继续转换为ZonedDateTime：
         // Date -> Instant
@@ -478,14 +479,11 @@ public class NewDateTime {
         ZoneId defaultZone = TimeZone.getDefault().toZoneId();
         System.out.println(defaultZone);
 
-
         Date dt = Date.from(Instant.now());
         System.out.println(dt);
-
+        //ZoneId to TimeZone
         TimeZone tz = TimeZone.getTimeZone(defaultZone);
         System.out.println(tz);
 
-        GregorianCalendar gc = GregorianCalendar.from(gregorianCalendarDateTime);
-        System.out.println(gc);
     }
 }
