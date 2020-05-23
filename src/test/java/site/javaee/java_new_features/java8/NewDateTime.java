@@ -465,7 +465,7 @@ public class NewDateTime {
         ZonedDateTime zdt2 = ZonedDateTime.now();
         long ts = zdt2.toEpochSecond() * 1000;
 
-        // long -> Date:
+        // long -> Date::
         Date date2 = new Date(ts);
 
         // long -> Calendar:
