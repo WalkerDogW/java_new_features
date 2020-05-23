@@ -7,6 +7,10 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 /**
  * @author Tao
@@ -299,8 +303,8 @@ public class NewDateTime {
         //nextOrSame/previousOrSame 创建新的日期，并将其值设定为日期调整后或者调整前，第一个符合指定条件（这里使用了星期一举例））要求的日期，如果该日期已经符合要求，直接返回该对象
         LocalDateTime with5 = LocalDate.now().minusWeeks(1).with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)).atStartOfDay();
         System.out.println("从现在开始获取上周一的零点 : "+with5);
-        LocalDateTime with6 =LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)).atStartOfDay().minusSeconds(1000);
-        System.out.println("从现在时间往前获取上周末的23:59:59 : "+with5);
+        LocalDateTime with6 =LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)).atStartOfDay().minusSeconds(1);
+        System.out.println("从现在时间往前获取上周末的23:59:59 : "+with6);
     }
 
     /**
@@ -375,6 +379,32 @@ public class NewDateTime {
      * 新旧dateTime转换
      */
     void oldToNew(){
+        //Date to Instant
+        Instant timestamp = new Date().toInstant();
+        //Now we can convert Instant to LocalDateTime or other similar classes
+        LocalDateTime date = LocalDateTime.ofInstant(timestamp,
+                ZoneId.of(ZoneId.SHORT_IDS.get("PST")));
+        System.out.println("Date = "+date);
 
+        //Calendar to Instant
+        Instant time = Calendar.getInstance().toInstant();
+        System.out.println(time);
+        //TimeZone to ZoneId
+        ZoneId defaultZone = TimeZone.getDefault().toZoneId();
+        System.out.println(defaultZone);
+
+        //ZonedDateTime from specific Calendar
+        ZonedDateTime gregorianCalendarDateTime = new GregorianCalendar().toZonedDateTime();
+        System.out.println(gregorianCalendarDateTime);
+
+        //Date API to Legacy classes
+        Date dt = Date.from(Instant.now());
+        System.out.println(dt);
+
+        TimeZone tz = TimeZone.getTimeZone(defaultZone);
+        System.out.println(tz);
+
+        GregorianCalendar gc = GregorianCalendar.from(gregorianCalendarDateTime);
+        System.out.println(gc);
     }
 }
