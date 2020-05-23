@@ -184,5 +184,6 @@ public class NewDateTime {
         Instant end = Instant.parse("2017-10-03T10:16:30.00Z");
         Duration duration = Duration.between(start, end);
         System.out.println(duration);
+        /**/
     }
 }
