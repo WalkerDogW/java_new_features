@@ -1,16 +1,16 @@
 package site.javaee.java_new_features.java8;
 
 import org.junit.jupiter.api.Test;
+import org.junit.platform.commons.util.StringUtils;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.TimeZone;
+import java.util.*;
 
 /**
  * @author Tao
@@ -133,6 +133,27 @@ public class NewDateTime {
         System.out.println("10000th second time from 01/01/1970= " + dateFromBase);
     }
 
+    /**
+     * ZonedDateTime 表示一个带时区的日期和时间，可以简单地把ZonedDateTime理解成LocalDateTime加ZoneId
+     * DateTimeFormatter不但是不变对象，它还是线程安全的。
+     */
+    @Test
+    void zonedDateTime() {
+        // 默认时区
+        ZonedDateTime zbj = ZonedDateTime.now();
+        System.out.println(zbj);
+        // 用指定时区获取当前时间
+        ZonedDateTime zny = ZonedDateTime.now(ZoneId.of("America/New_York"));
+        System.out.println(zny);
+
+        //通过给一个LocalDateTime附加一个ZoneId，就可以变成ZonedDateTime：
+        LocalDateTime ldt = LocalDateTime.of(2019, 9, 15, 15, 16, 17);
+        ZonedDateTime zbj2 = ldt.atZone(ZoneId.systemDefault());
+        ZonedDateTime zny2 = ldt.atZone(ZoneId.of("America/New_York"));
+        System.out.println(zbj2);
+        System.out.println(zny2);
+
+    }
 
     /**
      * Instant类用于处理机器可读的时间格式，它将日期时间存储在unix时间戳中。
@@ -215,7 +236,7 @@ public class NewDateTime {
 
         //能基于下面的方法获得Duration对象，ofDays(), ofHours(), ofMillis(), ofMinutes(), ofNanos(), ofSeconds():
         Duration fromDays = Duration.ofDays(1);
-        System.out.println( fromDays.getSeconds());
+        System.out.println(fromDays.getSeconds());
         Duration fromMinutes = Duration.ofMinutes(60);
         System.out.println(fromMinutes.getSeconds());
 
@@ -229,8 +250,8 @@ public class NewDateTime {
         System.out.println(fromDays.toHours());
 
         //通过 plusX()、minusX()方法增加或减少Duration对象，其中X表示days, hours, millis, minutes, nanos 或 seconds:
-        System.out.println( duration.plusSeconds(60).getSeconds());
-        System.out.println(  duration.minusSeconds(30).getSeconds());
+        System.out.println(duration.plusSeconds(60).getSeconds());
+        System.out.println(duration.minusSeconds(30).getSeconds());
 
         //使用plus()和minus()方法带TemporalUnit 类型参数进行加减
         System.out.println(duration.plus(50, ChronoUnit.SECONDS).getSeconds());
@@ -242,7 +263,7 @@ public class NewDateTime {
      * ChronoUnit 是期枚举类，提供了一组标准的日期时间单位，这是一个最终的、不可变的和线程安全的枚举。。
      */
     @Test
-    void chronoUnit(){
+    void chronoUnit() {
         //当前时间
         LocalDate today = LocalDate.now();
         System.out.println("Current date: " + today);
@@ -274,7 +295,7 @@ public class NewDateTime {
      * TemporalAdjuster可以执行复杂的日期操作，例如，可以获得下一个星期日对于日期、当月的最后一天、下一年的第一天。
      */
     @Test
-    void temporalAdjusters(){
+    void temporalAdjusters() {
         //当前日期
         LocalDate localDate = LocalDate.now();
         System.out.println("current date : " + localDate);
@@ -302,102 +323,179 @@ public class NewDateTime {
 
         //nextOrSame/previousOrSame 创建新的日期，并将其值设定为日期调整后或者调整前，第一个符合指定条件（这里使用了星期一举例））要求的日期，如果该日期已经符合要求，直接返回该对象
         LocalDateTime with5 = LocalDate.now().minusWeeks(1).with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)).atStartOfDay();
-        System.out.println("从现在开始获取上周一的零点 : "+with5);
-        LocalDateTime with6 =LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)).atStartOfDay().minusSeconds(1);
-        System.out.println("从现在时间往前获取上周末的23:59:59 : "+with6);
+        System.out.println("从现在开始获取上周一的零点 : " + with5);
+        LocalDateTime with6 = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)).atStartOfDay().minusSeconds(1);
+        System.out.println("从现在时间往前获取上周末的23:59:59 : " + with6);
+    }
+
+    /**
+     * Locale 表示地区。每一个Locale对象都代表了一个特定的地理、政治和文化地区。
+     * 在操作 Date, Calendar等表示日期/时间的对象时，经常会用到；因为不同的区域，时间表示方式都不
+     */
+    @Test
+    void locale(){
+
+    }
+
+    /**
+     * DateTimeFormatter 日期解析和格式化
+     */
+    @Test
+    void dateTimeFormatter() {
+
+        //默认Locale
+        ZonedDateTime zdt = ZonedDateTime.now();
+        DateTimeFormatter formatter3 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm ZZZZ");
+        System.out.println(formatter3.format(zdt));
+        //指定Locale
+        DateTimeFormatter zhFormatter = DateTimeFormatter.ofPattern("yyyy MMM dd EE HH:mm", Locale.CHINA);
+        System.out.println(zhFormatter.format(zdt));
+
+        DateTimeFormatter usFormatter = DateTimeFormatter.ofPattern("E, MMMM/dd/yyyy HH:mm", Locale.US);
+        System.out.println(usFormatter.format(zdt));
+
+        //当前日期
+        LocalDate date = LocalDate.now();
+        //默认格式
+        System.out.println("默认格式 LocalDate=" + date);
+        //指定格式
+        System.out.println(date.format(DateTimeFormatter.ofPattern("d::MMM::uuuu")));
+        System.out.println(date.format(DateTimeFormatter.BASIC_ISO_DATE));
+        System.out.println(date.format(DateTimeFormatter.ISO_WEEK_DATE));
+
+
+
+        //当前时间
+        LocalDateTime dateTime = LocalDateTime.now();
+        //默认格式
+        System.out.println("默认格式 LocalDateTime=" + dateTime);
+        //指定格式
+        System.out.println(dateTime.format(DateTimeFormatter.ofPattern("d::MMM::uuuu HH::mm::ss")));
+        System.out.println(dateTime.format(DateTimeFormatter.BASIC_ISO_DATE));
+
+        //当前时间戳
+        Instant timestamp = Instant.now();
+        //default format
+        System.out.println("默认格式 Instant=" + timestamp);
+
+        /*
+        DateTimeFormatter dTF = DateTimeFormatter.ofPattern("dd MMM uuuu");
+        String anotherDate = "04 Aug 2015";
+        LocalDate lds = LocalDate.parse(anotherDate, dTF);
+        System.out.println(anotherDate + " parses to " + lds);
+           */
+        //Parse examples
+        /*
+        ZonedDateTime zdt = ZonedDateTime.now();
+
+        LocalDateTime dt = LocalDateTime.parse("27::Apr::2014 21::39::48",
+                DateTimeFormatter.withZone(ZoneId.of("Asia/Shanghai")).ofPattern("d::MMM::uuuu HH::mm::ss"));
+        System.out.println("Default format after parsing = " + dt);
+
+         */
+
+
+        //DateTimeFormatter beijingFormatter = DateTimeFormatter.ofPattern("d::MMM::uuuu HH::mm::ss").withZone(ZoneId.of("America/New_York"));
+        /*
+        DateTimeFormatter beijingFormatter = DateTimeFormatter.ofPattern("d::MMM::uuuu HH::mm::ss").withLocale(Locale.GERMAN);
+        ZonedDateTime beijingDateTime = ZonedDateTime.parse("27::Apr::2014 21::39::48", beijingFormatter);
+        beijingDateTime.withZoneSameInstant(ZoneId.of("UTC"));
+
+         */
+
+         /*
+        Map<Long, String> monthNameMap = new HashMap<>();
+        monthNameMap.put(1L, "Jan.");
+        monthNameMap.put(2L, "Feb.");
+        monthNameMap.put(3L, "Mar.");
+        DateTimeFormatter fmt = new DateTimeFormatterBuilder()
+                .appendPattern("d. ")
+                .appendText(ChronoField.MONTH_OF_YEAR, monthNameMap)
+                .appendPattern(" HH:mm")
+                .parseDefaulting(ChronoField.YEAR, 2016)
+                .toFormatter();
+
+        System.out.println(LocalDateTime.parse("10. Jan. 18:14", fmt));
+        System.out.println(LocalDateTime.parse("8. Feb. 19:02", fmt));
+        */
     }
 
     /**
      * Date API实用程序
      */
     @Test
-    void dateApi(){
+    void dateApi() {
         //当前日期
         LocalDate today = LocalDate.now();
 
         //获取年份，判断是否闰年
-        System.out.println("Year "+today.getYear()+" is Leap Year? "+today.isLeapYear());
+        System.out.println("Year " + today.getYear() + " is Leap Year? " + today.isLeapYear());
 
         //两个日期比较先后
-        System.out.println("Today is before 01/01/2015? "+today.isBefore(LocalDate.of(2015,1,1)));
+        System.out.println("Today is before 01/01/2015? " + today.isBefore(LocalDate.of(2015, 1, 1)));
 
         //通过LocalTime创建 LocalDateTime
-        System.out.println("Current Time="+today.atTime(LocalTime.now()));
+        System.out.println("Current Time=" + today.atTime(LocalTime.now()));
 
         //日期增减操作
-        System.out.println("10 days after today will be "+today.plusDays(10));
-        System.out.println("3 weeks after today will be "+today.plusWeeks(3));
-        System.out.println("20 months after today will be "+today.plusMonths(20));
-        System.out.println("10 days before today will be "+today.minusDays(10));
-        System.out.println("3 weeks before today will be "+today.minusWeeks(3));
-        System.out.println("20 months before today will be "+today.minusMonths(20));
+        System.out.println("10 days after today will be " + today.plusDays(10));
+        System.out.println("3 weeks after today will be " + today.plusWeeks(3));
+        System.out.println("20 months after today will be " + today.plusMonths(20));
+        System.out.println("10 days before today will be " + today.minusDays(10));
+        System.out.println("3 weeks before today will be " + today.minusWeeks(3));
+        System.out.println("20 months before today will be " + today.minusMonths(20));
 
         //当月第一天
-        System.out.println("First date of this month= "+today.with(TemporalAdjusters.firstDayOfMonth()));
+        System.out.println("First date of this month= " + today.with(TemporalAdjusters.firstDayOfMonth()));
         LocalDate lastDayOfYear = today.with(TemporalAdjusters.lastDayOfYear());
-        System.out.println("Last date of this year= "+lastDayOfYear);
+        System.out.println("Last date of this year= " + lastDayOfYear);
 
         //今年剩余天数
         Period period = today.until(today.with(TemporalAdjusters.lastDayOfYear()));
-        System.out.println("Period Format= "+period);
-        System.out.println("Months remaining in the year= "+period.getMonths());
+        System.out.println("Period Format= " + period);
+        System.out.println("Months remaining in the year= " + period.getMonths());
     }
 
-
-    /**
-     * 日期解析和格式化
-     */
-    @Test
-    void parser(){
-        //Format examples
-        LocalDate date = LocalDate.now();
-        //default format
-        System.out.println("Default format of LocalDate="+date);
-        //specific format
-        System.out.println(date.format(DateTimeFormatter.ofPattern("d::MMM::uuuu")));
-        System.out.println(date.format(DateTimeFormatter.BASIC_ISO_DATE));
-
-
-        LocalDateTime dateTime = LocalDateTime.now();
-        //default format
-        System.out.println("Default format of LocalDateTime="+dateTime);
-        //specific format
-        System.out.println(dateTime.format(DateTimeFormatter.ofPattern("d::MMM::uuuu HH::mm::ss")));
-        System.out.println(dateTime.format(DateTimeFormatter.BASIC_ISO_DATE));
-
-        Instant timestamp = Instant.now();
-        //default format
-        System.out.println("Default format of Instant="+timestamp);
-
-        //Parse examples
-        LocalDateTime dt = LocalDateTime.parse("27::Apr::2014 21::39::48",
-                DateTimeFormatter.ofPattern("d::MMM::uuuu HH::mm::ss"));
-        System.out.println("Default format after parsing = "+dt);
-    }
 
     /**
      * 新旧dateTime转换
      */
-    void oldToNew(){
-        //Date to Instant
+    void oldToNew() {
+        //旧API转新API，通过toInstant()方法转换为Instant对象，再继续转换为ZonedDateTime：
+        // Date -> Instant
         Instant timestamp = new Date().toInstant();
-        //Now we can convert Instant to LocalDateTime or other similar classes
         LocalDateTime date = LocalDateTime.ofInstant(timestamp,
                 ZoneId.of(ZoneId.SHORT_IDS.get("PST")));
-        System.out.println("Date = "+date);
+        System.out.println("Date = " + date);
 
-        //Calendar to Instant
-        Instant time = Calendar.getInstance().toInstant();
-        System.out.println(time);
-        //TimeZone to ZoneId
-        ZoneId defaultZone = TimeZone.getDefault().toZoneId();
-        System.out.println(defaultZone);
+        // Calendar -> Instant
+        Calendar calendar = Calendar.getInstance();
+        Instant ins2 = Calendar.getInstance().toInstant();
+        ZonedDateTime zdt = ins2.atZone(calendar.getTimeZone().toZoneId());
 
         //ZonedDateTime from specific Calendar
         ZonedDateTime gregorianCalendarDateTime = new GregorianCalendar().toZonedDateTime();
         System.out.println(gregorianCalendarDateTime);
 
-        //Date API to Legacy classes
+        //新API转旧API，如果要把新的ZonedDateTime转换为旧的API对象，只能借助long型时间戳做一个“中转”：
+        // ZonedDateTime -> long:
+        ZonedDateTime zdt2 = ZonedDateTime.now();
+        long ts = zdt2.toEpochSecond() * 1000;
+
+        // long -> Date:
+        Date date2 = new Date(ts);
+
+        // long -> Calendar:
+        Calendar calendar2 = Calendar.getInstance();
+        calendar2.clear();
+        calendar2.setTimeZone(TimeZone.getTimeZone(zdt.getZone().getId()));
+        calendar2.setTimeInMillis(zdt.toEpochSecond() * 1000);
+
+        //TimeZone to ZoneId
+        ZoneId defaultZone = TimeZone.getDefault().toZoneId();
+        System.out.println(defaultZone);
+
+
         Date dt = Date.from(Instant.now());
         System.out.println(dt);
 
