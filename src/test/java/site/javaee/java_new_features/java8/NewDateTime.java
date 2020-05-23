@@ -334,6 +334,16 @@ public class NewDateTime {
      */
     @Test
     void locale(){
+        //默认Locale
+        Locale locale = Locale.getDefault();
+        System.out.println(locale);
+
+        //指定Locale，ja代表“语言”，这里指日语；“JP”代表国家，这里指日本。
+        Locale locale2 = new Locale("ja", "JP");
+
+        //所有Locale
+        Locale[] ls = Locale.getAvailableLocales();
+        System.out.println(ls);
 
     }
 
@@ -343,14 +353,14 @@ public class NewDateTime {
     @Test
     void dateTimeFormatter() {
 
-        //默认Locale
+        //默认Locale创建DateTimeFormatter
         ZonedDateTime zdt = ZonedDateTime.now();
         DateTimeFormatter formatter3 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm ZZZZ");
         System.out.println(formatter3.format(zdt));
-        //指定Locale
+        //指定Locale创建DateTimeFormatter（中国）
         DateTimeFormatter zhFormatter = DateTimeFormatter.ofPattern("yyyy MMM dd EE HH:mm", Locale.CHINA);
         System.out.println(zhFormatter.format(zdt));
-
+        //指定Locale创建DateTimeFormatter（美国）
         DateTimeFormatter usFormatter = DateTimeFormatter.ofPattern("E, MMMM/dd/yyyy HH:mm", Locale.US);
         System.out.println(usFormatter.format(zdt));
 
@@ -378,46 +388,19 @@ public class NewDateTime {
         //default format
         System.out.println("默认格式 Instant=" + timestamp);
 
-        /*
-        DateTimeFormatter dTF = DateTimeFormatter.ofPattern("dd MMM uuuu");
+        //解析时间文本
+        DateTimeFormatter dTF = DateTimeFormatter.ofPattern("dd MMM uuuu",Locale.US);
+        DateTimeFormatter dT2 = DateTimeFormatter.ofPattern("dd MMM uuuu").withLocale(Locale.US);
         String anotherDate = "04 Aug 2015";
         LocalDate lds = LocalDate.parse(anotherDate, dTF);
         System.out.println(anotherDate + " parses to " + lds);
-           */
-        //Parse examples
-        /*
-        ZonedDateTime zdt = ZonedDateTime.now();
 
-        LocalDateTime dt = LocalDateTime.parse("27::Apr::2014 21::39::48",
-                DateTimeFormatter.withZone(ZoneId.of("Asia/Shanghai")).ofPattern("d::MMM::uuuu HH::mm::ss"));
+
+        //指定时区的DateTimeFormatter
+        ZonedDateTime dt = ZonedDateTime.parse("27::Apr::2014 21::39::48",
+                DateTimeFormatter.ofPattern("d::MMM::uuuu HH::mm::ss", Locale.US).withZone(ZoneId.of("America/New_York")));
         System.out.println("Default format after parsing = " + dt);
 
-         */
-
-
-        //DateTimeFormatter beijingFormatter = DateTimeFormatter.ofPattern("d::MMM::uuuu HH::mm::ss").withZone(ZoneId.of("America/New_York"));
-        /*
-        DateTimeFormatter beijingFormatter = DateTimeFormatter.ofPattern("d::MMM::uuuu HH::mm::ss").withLocale(Locale.GERMAN);
-        ZonedDateTime beijingDateTime = ZonedDateTime.parse("27::Apr::2014 21::39::48", beijingFormatter);
-        beijingDateTime.withZoneSameInstant(ZoneId.of("UTC"));
-
-         */
-
-         /*
-        Map<Long, String> monthNameMap = new HashMap<>();
-        monthNameMap.put(1L, "Jan.");
-        monthNameMap.put(2L, "Feb.");
-        monthNameMap.put(3L, "Mar.");
-        DateTimeFormatter fmt = new DateTimeFormatterBuilder()
-                .appendPattern("d. ")
-                .appendText(ChronoField.MONTH_OF_YEAR, monthNameMap)
-                .appendPattern(" HH:mm")
-                .parseDefaulting(ChronoField.YEAR, 2016)
-                .toFormatter();
-
-        System.out.println(LocalDateTime.parse("10. Jan. 18:14", fmt));
-        System.out.println(LocalDateTime.parse("8. Feb. 19:02", fmt));
-        */
     }
 
     /**
